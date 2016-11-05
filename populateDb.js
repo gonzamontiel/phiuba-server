@@ -1,6 +1,6 @@
 var jsonfile = require('jsonfile');
-var Database = require('./Database.js');
-var strings = require('./strings.js');
+var Database = require('./lib/Database.js');
+var strings = require('./lib/strings.js');
 
 var db = new Database();
 var Course = require('./model/Course.js');
