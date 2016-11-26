@@ -3,10 +3,22 @@ var config = require('config');
 
 const DEFAULT_LIMIT = 50;
 
+function handleError(error) {
+    console.error(error);
+}
+
+var __instance = null;
 /**
  *  @class Database Wrapper for mongoose querying, parameter sanitizing and error handling.
  */
 class Database {
+    static start() {
+        if (!__instance) {
+            __instance = new Database();
+        }
+        return __instance;
+    }
+
     constructor() {
         this.connected = false;
         mongoose.Promise = global.Promise;
@@ -21,26 +33,41 @@ class Database {
         });
     }
 
+    connection() {
+        return this.db;
+    }
+
     isConnected() {
         return this.connected;
     }
 
-    get(model, callback, limit) {
-        model.find({})
-        .limit(limit || DEFAULT_LIMIT)
-        .exec(function (err, results) {
+    getDistinct(modelRef, field, callback) {
+        modelRef.distinct(field, function(err, results) {
+            if (err) return handleError(err);
+            callback (results);
+        });
+    }
+
+    get(modelRef, callback, limit) {
+        let dbquery = modelRef.find({});
+        if (limit !== 0) {
+            query.limit(limit || DEFAULT_LIMIT);
+        }
+        dbquery.exec(function (err, results) {
             if (err) return handleError(err);
             callback (results);
         });
       }
 
     search(query, modelRef, callback, limit) {
-        modelRef.find(query)
-            .limit(limit || DEFAULT_LIMIT)
-            .exec(function (err, results) {
-                if (err) return handleError(err);
-                callback (results);
-            });
+        let dbquery = modelRef.find(query);
+        if (limit !== 0) {
+            query.limit(limit || DEFAULT_LIMIT);
+        }
+        dbquery.exec(function (err, results) {
+            if (err) return handleError(err);
+            callback (results);
+        });
     }
 
     updateOne(modelRef, query, updateSet) {

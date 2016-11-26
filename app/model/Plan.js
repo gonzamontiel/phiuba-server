@@ -12,11 +12,4 @@ var planSchema = new Schema({
 });
 planSchema.index({code: 1}); // To search by code
 
-planSchema.methods.fromValue = function(value) {
-    this.code = value.code;
-    this.name = value.name;
-    this.link = value.link;
-};
-
-var Plan = mongoose.model('Plan', planSchema);
-module.exports = Plan;
+module.exports = mongoose.model('Plan', planSchema);
