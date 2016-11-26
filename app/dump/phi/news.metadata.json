@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":1,"key":{"_id":1},"name":"_id_","ns":"phi.news"},{"v":1,"unique":true,"key":{"link":1},"name":"link_1","ns":"phi.news","background":true},{"v":1,"key":{"title":1},"name":"title_1","ns":"phi.news","background":true},{"v":1,"key":{"created":1},"name":"created_1","ns":"phi.news","background":true}]}

@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":1,"key":{"_id":1},"ns":"phi.plans","name":"_id_"},{"v":1,"key":{"code":1},"name":"code_1","ns":"phi.plans","background":true}]}
