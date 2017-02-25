@@ -41,3 +41,12 @@ module.exports.tokenize = function(str, minChars) {
     })
     return words.concat(tokens).join(" ");
 };
+
+/**
+* Returns wheter the input string is a roman numeral.
+* @param {string} str the string to be evaluated
+*/
+module.exports.isRoman = function(str) {
+    var reg = new RegExp(/(^(?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})$)/);
+    return reg.test(str);
+};
