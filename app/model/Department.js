@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var departmentSchema = new Schema({
     'code': String,
+    'altCode': String,
     'contacto': String,
     'name': String,
     'mailto': String,
@@ -15,6 +16,7 @@ var departmentSchema = new Schema({
     'CA-alumnos': String
 });
 departmentSchema.index({code: 1}); // To search by code
+departmentSchema.index({altCode: 1}); // To search by alternative code
 
 departmentSchema.methods.getConditions = function() {
     return {code: this.code};

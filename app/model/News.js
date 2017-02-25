@@ -6,15 +6,15 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var newsSchema = new Schema({
     title: {type: String, default: 'notitle'},
-    created: String,
+    created: Date,
     thumbnail: String,
     text: String,
     img: String,
     link: String
 });
 newsSchema.index({link: 1}, {unique: true}); // To avoid duplicates
-newsSchema.index({title: 1}); // To search by title
-newsSchema.index({created: 1}); // To search by date
+newsSchema.index({ "title": "text", "text": "text" }, {name: "newsTextIndex"}); // To search by text in title and description
+newsSchema.index({created: -1}); // To search by date
 
 newsSchema.methods.getConditions = function() {
     return {'link': this.link};

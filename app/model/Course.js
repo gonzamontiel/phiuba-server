@@ -9,13 +9,24 @@ var courseSchema = new Schema({
     depCode: String,
     planCode: String,
     name: String,
+    alias: String,
     indexableTokens: String,
     link: String,
     depto: String,
     required: Boolean,
     correlatives: [Schema.Types.Mixed], // Array of another courses code
     mtime: {type: Date, default: Date.now}
+},
+{
+    toJSON: {
+        transform: function(doc, ret) {
+                delete ret.indexableTokens;
+                delete ret._id;
+                delete ret.mtime;
+        }
+    }
 });
+
 courseSchema.index({planCode: 1, indexableTokens: "text"}); // Common case, search by name and plan code
 courseSchema.index({planCode: 1, code: 1}, {unique: true, dropDups: true}); // Unique index for plan and code
 courseSchema.index({depCode: 1}); // To search by department and/or by full code

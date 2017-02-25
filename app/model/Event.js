@@ -15,7 +15,8 @@ var eventSchema = new Schema({
     }
 });
 eventSchema.index({title: 1}, {unique: true}); // To search by title
-eventSchema.index({start: 1, end: 1}); // To search by title
+eventSchema.index({start: 1, end: 1}); // To search by dates
+eventSchema.index({"title": "text", "extra.info": "text"}); // Search by text
 
 eventSchema.methods.getConditions = function() {
     if (this.title !== undefined) {
