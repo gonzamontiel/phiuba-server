@@ -3,7 +3,10 @@ var bodyParser = require('body-parser');
 var strings = require('./lib/strings.js');
 var Database = require('./db/Database.js');
 var Course = require('./model/Course.js');
+var Cathedra = require('./model/Cathedra.js');
+var Department = require('./model/Department.js');
 var News = require('./model/News.js');
+var Event = require('./model/Event.js');
 var ModelFactory = require('./model/Factory.js');
 var Logger = require('./Logger.js');
 var config = require('config');
@@ -20,10 +23,6 @@ app.use(function(err, req, res, next) {
 });
 
 // Server
-app.get('/', function (req, res) {
-    res.send('Hello World!');
-});
-
 app.post('/api/load/:collection', function (req, res) {
     var failed = 0, succeded = 0;
     function updateCallback(err, result) {
@@ -60,35 +59,88 @@ app.post('/api/load/:collection', function (req, res) {
     }
 });
 
-app.get('/api/get_courses', function (req, res) {
+app.get('/api/courses', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    Course.find({'planCode': req.query.planCode}, function(results) {
-        res.send(JSON.stringify(results));
-    });
-});
-
-app.get('/api/search_courses', function (req, res) {
     if (req.query.search) {
-        res.setHeader('Content-Type', 'application/json');
         let query = searchAndReplaceNumbers(req.query.search);
-        console.log("Search \"" + query + "\" for plan " + req.query.planCode);
         Course.find(
-            { planCode: req.query.planCode, $text: { $search: query} },
+            {planCode: req.query.planCode, $text: { $search: query} },
             {score: { $meta: "textScore"}})
             .sort({ score: { $meta: "textScore" } })
             .exec(function (error, result) {
                 if (error) Logger.error(error);
                 res.send(JSON.stringify(result));
             });
-    } else {
-        res.status(500).send(error("Bad request"));
+        } else {
+            Course.find({'planCode': req.query.planCode}, {}, function(error, results) {
+                if (error) res.send(error('Could not find data.'));
+                res.send(JSON.stringify(results));
+            });
+        }
+});
+
+app.get('/api/cathedras', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    Cathedra.find({'courseCode': req.query.courseCode}, {}, function(error, results) {
+        if (error) res.send(error('Could not find data.'));
+        res.send(JSON.stringify(results));
+    });
+});
+
+app.get('/api/news', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    var query = {};
+    if (req.query.search) {
+        // Search by text in all news
+        query = { $text: { $search: req.query.search } };
     }
+    News.find(query, {}, {sort: {created: -1}}, function(error, results) {
+        if (error) res.send(error('Could not find data.'));
+        res.send(JSON.stringify(results));
+    });
+});
+
+app.get('/api/events', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    var query = {};
+    if (req.query.search) {
+        // Search by text in all news
+        query = { $text: { $search: req.query.search } };
+    } else if (req.query.onlyIncoming == true) {
+        query = {'end': { $gte : new Date() }}
+    }
+    Event.find(query, {}, {sort: {parsedDate: -1}},function(error, results) {
+        if (error) res.send(error('Could not find data.'));
+        res.send(JSON.stringify(results));
+    });
+});
+
+app.get('/api/departments', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    Department.find({}, {}, function(error, results) {
+        if (error) res.send(error('Could not find data.'));
+        res.send(JSON.stringify(results));
+    });
+});
+
+app.get('/api/plans', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    Department.find({}, {}, function(error, results) {
+        if (error) res.send(error('Could not find data.'));
+        res.send(JSON.stringify(results));
+    });
 });
 
 app.listen(
     config.get('server.port'),
     function () {
-        console.log('Listening connections on port ' + config.get('server.port'));
+        Logger.info('Listening connections on port ' + config.get('server.port'));
+        Logger.info('Will list available routes');
+        app._router.stack.forEach(function(layer) {
+            if (layer.route) {
+                Logger.info(layer.route.path);
+            }
+        });
     }
 );
 
