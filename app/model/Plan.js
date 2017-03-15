@@ -10,6 +10,6 @@ var planSchema = new Schema({
     name: String,
     link: String
 });
-planSchema.index({code: 1}); // To search by code
+planSchema.index({code: 1}, {unique: true}); // To search by code
 
 module.exports = mongoose.model('Plan', planSchema);

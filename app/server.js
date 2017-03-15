@@ -7,6 +7,7 @@ var Cathedra = require('./model/Cathedra.js');
 var Department = require('./model/Department.js');
 var News = require('./model/News.js');
 var Event = require('./model/Event.js');
+var Plan = require('./model/Plan.js');
 var ModelFactory = require('./model/Factory.js');
 var Logger = require('./Logger.js');
 var config = require('config');
@@ -125,10 +126,22 @@ app.get('/api/departments', function (req, res) {
 
 app.get('/api/plans', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    Department.find({}, {}, function(error, results) {
-        if (error) res.send(error('Could not find data.'));
-        res.send(JSON.stringify(results));
-    });
+    Plan.aggregate(
+        {
+            $group: {
+                _id: "$code",
+                name: {$first: "$name"},
+                link: {$first: "$link"},
+                code: { $first: "$code" }
+            }
+        },
+        function(error, results) {
+            if (error) res.send(error('Could not find data.'));
+            res.send(JSON.stringify(results));
+        }
+    );
+});
+
 });
 
 app.listen(
