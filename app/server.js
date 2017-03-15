@@ -93,7 +93,7 @@ app.get('/api/news', function (req, res) {
     var query = {};
     if (req.query.search) {
         // Search by text in all news
-        query = { $text: { $search: req.query.search } };
+        query = { $text: { $search: req.query.search.toLowerCase() } };
     }
     News.find(query, {}, {sort: {created: -1}}, function(error, results) {
         if (error) res.send(error('Could not find data.'));
