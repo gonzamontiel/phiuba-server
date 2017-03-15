@@ -106,11 +106,11 @@ app.get('/api/events', function (req, res) {
     var query = {};
     if (req.query.search) {
         // Search by text in all news
-        query = { $text: { $search: req.query.search } };
+        query = { $text: { $search: req.query.search.toLowerCase() } };
     } else if (req.query.onlyIncoming == true) {
         query = {'end': { $gte : new Date() }}
     }
-    Event.find(query, {}, {sort: {parsedDate: -1}},function(error, results) {
+    Event.find(query, {}, {sort: {parsedDate: -1}}, function(error, results) {
         if (error) res.send(error('Could not find data.'));
         res.send(JSON.stringify(results));
     });
