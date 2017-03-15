@@ -142,6 +142,9 @@ app.get('/api/plans', function (req, res) {
     );
 });
 
+app.get('/test', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(success("OK"))
 });
 
 app.listen(
