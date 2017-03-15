@@ -72,12 +72,12 @@ app.get('/api/courses', function (req, res) {
                 if (error) Logger.error(error);
                 res.send(JSON.stringify(result));
             });
-        } else {
-            Course.find({'planCode': req.query.planCode}, {}, function(error, results) {
-                if (error) res.send(error('Could not find data.'));
-                res.send(JSON.stringify(results));
-            });
-        }
+    } else {
+        Course.find({'planCode': req.query.planCode}, {}, {sort: {name: 1}}, function(error, results) {
+            if (error) res.send(error('Could not find data.'));
+            res.send(JSON.stringify(results));
+        });
+    }
 });
 
 app.get('/api/cathedras', function (req, res) {

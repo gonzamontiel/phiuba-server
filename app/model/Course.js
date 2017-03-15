@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var tokenize = require('app/lib/strings.js').tokenize;
 
 /**
  * Course representa una materia dado una versión de plan de estudios.
@@ -56,13 +57,18 @@ courseSchema.methods.codeWithoutDot = function() {
     return courseSchema.statics.convertToSimpleNotation(this.code);
 };
 
-
 courseSchema.methods.getConditions = function() {
     return {code: this.code};
 };
 
-var Course = mongoose.model('Course', courseSchema);
+courseSchema.pre('save', true, function(next, done) {
+    // calling next kicks off the next middleware in parallel
+    next();
+    this.indexableTokens = tokenize(this.name);
+    done();
+});
 
+var Course = mongoose.model('Course', courseSchema);
 Course.on('index', function(err) {
     if (err) {
         console.error('User index error: %s', err);
