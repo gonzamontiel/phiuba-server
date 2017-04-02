@@ -23,6 +23,14 @@ app.use(function(err, req, res, next) {
   res.status(500).send(JSON.stringify(error('That was an error')));
 });
 
+function success(payload) {
+    return JSON.stringify({'error': false, 'msg': payload});
+}
+
+function jsonError(msg) {
+    return JSON.stringify({'error': true, 'msg': msg});
+}
+
 // Server
 app.post('/api/load/:collection', function (req, res) {
     var failed = 0, succeded = 0;
@@ -50,13 +58,13 @@ app.post('/api/load/:collection', function (req, res) {
             );
         }
         if (failed > 0) {
-            res.send(error(failed + " documents failed to be updated/inserted."));
+            res.send(jsonError(failed + " documents failed to be updated/inserted."));
         } else {
-            res.send(error(succeded + " documents were updated/inserted."));
+            res.send(jsonError(succeded + " documents were updated/inserted."));
         }
     } catch (err) {
         console.error(err);
-        res.send(error('Something bad happened.'));
+        res.send(jsonError('Something bad happened.'));
     }
 });
 
@@ -74,7 +82,7 @@ app.get('/api/courses', function (req, res) {
             });
     } else {
         Course.find({'planCode': req.query.planCode}, {}, {sort: {name: 1}}, function(error, results) {
-            if (error) res.send(error('Could not find data.'));
+            if (error) res.send(jsonError('Could not find data.'));
             res.send(JSON.stringify(results));
         });
     }
@@ -83,7 +91,7 @@ app.get('/api/courses', function (req, res) {
 app.get('/api/cathedras', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     Cathedra.find({'courseCode': req.query.courseCode}, {}, function(error, results) {
-        if (error) res.send(error('Could not find data.'));
+        if (error) res.send(jsonError('Could not find data.'));
         res.send(JSON.stringify(results));
     });
 });
@@ -96,7 +104,7 @@ app.get('/api/news', function (req, res) {
         query = { $text: { $search: req.query.search.toLowerCase() } };
     }
     News.find(query, {}, {sort: {created: -1}}, function(error, results) {
-        if (error) res.send(error('Could not find data.'));
+        if (error) res.send(jsonError('Could not find data.'));
         res.send(JSON.stringify(results));
     });
 });
@@ -111,7 +119,7 @@ app.get('/api/events', function (req, res) {
         query = {'end': { $gte : new Date() }}
     }
     Event.find(query, {}, {sort: {parsedDate: -1}}, function(error, results) {
-        if (error) res.send(error('Could not find data.'));
+        if (error) res.send(jsonError('Could not find data.'));
         res.send(JSON.stringify(results));
     });
 });
@@ -119,7 +127,7 @@ app.get('/api/events', function (req, res) {
 app.get('/api/departments', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     Department.find({}, {}, function(error, results) {
-        if (error) res.send(error('Could not find data.'));
+        if (error) res.send(jsonError('Could not find data.'));
         res.send(JSON.stringify(results));
     });
 });
@@ -136,7 +144,7 @@ app.get('/api/plans', function (req, res) {
             }
         },
         function(error, results) {
-            if (error) res.send(error('Could not find data.'));
+            if (error) res.send(jsonError('Could not find data.'));
             res.send(JSON.stringify(results));
         }
     );
@@ -173,12 +181,4 @@ function searchAndReplaceNumbers(str) {
             return romanNumerals[match];
         }
     });
-}
-
-function success(payload) {
-    return JSON.stringify({'error': false, 'msg': payload});
-}
-
-function error(msg) {
-    return JSON.stringify({'error': true, 'msg': msg});
 }
