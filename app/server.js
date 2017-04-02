@@ -137,6 +137,20 @@ app.get('/api/departments', function (req, res) {
     });
 });
 
+app.get('/api/department', function (req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    if (!req.query.code) {
+        res.send(jsonError("The department code must be specified in the query."));
+    } else {
+        Department.find({code: req.query.code}, {}).limit(1).exec(
+            function(error, result) {
+               if (error || result.length == 0) res.send(jsonError('Could not find data.'));
+               res.send(JSON.stringify(result[0]));
+           }
+       );
+    }
+});
+
 app.get('/api/plans', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     Plan.aggregate(
