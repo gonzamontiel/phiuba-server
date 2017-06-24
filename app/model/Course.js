@@ -16,7 +16,8 @@ var courseSchema = new Schema({
     depto: String,
     required: Boolean,
     correlatives: [Schema.Types.Mixed], // Array of another courses code
-    mtime: {type: Date, default: Date.now}
+    mtime: {type: Date, default: Date.now},
+    credits: Number
 },
 {
     toJSON: {

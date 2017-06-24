@@ -8,7 +8,13 @@ var Schema = mongoose.Schema;
 var planSchema = new Schema({
     code: String,
     name: String,
-    link: String
+    link: String,
+    credits: Number,
+    branches: [{
+        "code": String,
+        "name": String,
+        "required": [String]
+    }]
 });
 planSchema.index({code: 1}, {unique: true}); // To search by code
 

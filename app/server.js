@@ -86,7 +86,11 @@ app.get('/api/courses', function (req, res) {
             res.send(JSON.stringify(results));
         });
     } else {
-        Course.find({'planCode': req.query.planCode}, {}, {sort: {name: 1}}, function(error, results) {
+        var queryObject = {'planCode': req.query.planCode};
+        if (req.query.codes) {
+            queryObject['code'] = {$in: req.query.codes};
+        }
+        Course.find(queryObject, {}, {sort: {name: 1}}, function(error, results) {
             if (error) res.send(jsonError('Could not find data.'));
             res.send(JSON.stringify(results));
         });
@@ -153,15 +157,7 @@ app.get('/api/department', function (req, res) {
 
 app.get('/api/plans', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    Plan.aggregate(
-        {
-            $group: {
-                _id: "$code",
-                name: {$first: "$name"},
-                link: {$first: "$link"},
-                code: { $first: "$code" }
-            }
-        },
+    Plan.find({},
         function(error, results) {
             if (error) res.send(jsonError('Could not find data.'));
             res.send(JSON.stringify(results));
