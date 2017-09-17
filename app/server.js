@@ -80,8 +80,8 @@ app.get('/api/courses', function (req, res) {
                 if (error) Logger.error(error);
                 res.send(JSON.stringify(result));
             });
-    } else if (req.query.depCode) {
-        Course.find({'depCode': req.query.depCode}, {}, {sort: {name: 1}}, function(error, results) {
+    } else if (req.query.depCode && req.query.planCode) {
+        Course.find({'depCode': req.query.depCode, 'planCode': req.query.planCode}, {}, {sort: {name: 1}}, function(error, results) {
             if (error) res.send(jsonError('Could not find data.'));
             res.send(JSON.stringify(results));
         });
