@@ -11,6 +11,7 @@ var courseSchema = new Schema({
     planCode: String,
     name: String,
     alias: String,
+    type: String,
     indexableTokens: String,
     link: String,
     depto: String,
