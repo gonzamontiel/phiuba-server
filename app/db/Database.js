@@ -22,7 +22,7 @@ class Database {
     constructor() {
         this.connected = false;
         mongoose.Promise = global.Promise;
-        mongoose.connect('mongodb://localhost/phi', { config: config.get('db') });
+        mongoose.connect('mongodb://localhost/phi', { useMongoClient: true,config: config.get('db') });
         mongoose.set('debug', config.get('db.debugMode'));
         this.db = mongoose.connection;
         this.db.on('error', console.error.bind(console, 'connection error:'));
