@@ -141,8 +141,13 @@ app.get('/api/events', function (req, res) {
 });
 
 app.get('/api/departments', function (req, res) {
+    var query = {};
     res.setHeader('Content-Type', 'application/json');
-    Department.find({}, {}, function(error, results) {
+    if (req.query.search) {
+        // Search by text in all news
+        query = { $text: { $search: req.query.search.toLowerCase() } };
+    }
+    Department.find(query, {}, function(error, results) {
         if (error) res.send(jsonError('Could not find data.'));
         res.send(JSON.stringify(results));
     });
