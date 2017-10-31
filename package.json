@@ -17,7 +17,7 @@
     "body-parser": "^1.18.1",
     "config": "^1.26.2",
     "jsonfile": "^2.4.0",
-    "mongoose": "^4.11.11"
+    "mongoose": "^4.12.4"
   },
   "scripts": {
     "test": "mocha app/test",
