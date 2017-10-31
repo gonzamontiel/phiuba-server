@@ -24,7 +24,8 @@ var newsSchema = new Schema({
 });
 
 newsSchema.index({link: 1}, {unique: true}); // To avoid duplicates
-newsSchema.index({ "indexableTokens": "text", "text": "text" }, {name: "newsTextIndex"}); // To search by text in title and description
+newsSchema.index({ "title": "text", "text": "text" }, {
+    name: "newsTextIndex", default_language: "spanish"}); // To search by text in title and description
 newsSchema.index({created: -1}); // To search by date
 
 newsSchema.methods.getConditions = function() {

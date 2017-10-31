@@ -108,11 +108,14 @@ app.get('/api/cathedras', function (req, res) {
 app.get('/api/news', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     var query = {};
+    var sortObject = {sort: {created: -1}};
+    var fields = {};
     if (req.query.search) {
-        // Search by text in all news
         query = { $text: { $search: req.query.search.toLowerCase() } };
+        sortObject = { sort: { score: { $meta: "textScore" } } };
+        fields = { score: { $meta: "textScore" } };
     }
-    News.find(query, {}, {sort: {created: -1}}, function(error, results) {
+    News.find(query, fields, sortObject, function(error, results) {
         if (error) res.send(jsonError('Could not find data.'));
         res.send(JSON.stringify(results));
     });
@@ -121,13 +124,17 @@ app.get('/api/news', function (req, res) {
 app.get('/api/events', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     var query = {};
+    var sortObject = {sort: {parsedDate: -1}};
+    var fields = {};
     if (req.query.search) {
         // Search by text in all news
         query = { $text: { $search: req.query.search.toLowerCase() } };
+        sortObject = { sort: { score: { $meta: "textScore" } } };
+        fields = { score: { $meta: "textScore" } };
     } else if (req.query.onlyIncoming == true) {
         query = {'end': { $gte : new Date() }}
     }
-    Event.find(query, {}, {sort: {parsedDate: -1}}, function(error, results) {
+    Event.find(query, fields, sortObject, function(error, results) {
         if (error) res.send(jsonError('Could not find data.'));
         res.send(JSON.stringify(results));
     });
